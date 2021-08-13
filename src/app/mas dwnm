@@ -1,0 +1,1347 @@
+import { AfterContentChecked, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { IOption } from 'ng-select';
+import { Observable } from 'rxjs';
+import { ApiService } from '../../../layout/api.service';
+import * as _ from 'underscore';
+import { NgbTabset } from '@ng-bootstrap/ng-bootstrap';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { ToastrManager } from 'ng6-toastr-notifications';
+import { FormGroup } from '@angular/forms';
+import { FormBuilder, Validators, FormControl } from '@angular/forms';
+
+export class OtherData {}
+
+@Component({
+  selector: 'app-funds',
+  templateUrl: './funds.component.html',
+  styleUrls: ['./funds.component.scss'],
+})
+export class FundsComponent implements OnInit, AfterContentChecked {
+  @ViewChild('ctdTabset') ctdTabset;
+  rowsOnPage = 10;
+  fundForm: FormGroup;
+  filterQuery = '';
+  sortBy = '';
+  sortOrder = 'desc';
+  config: any;
+  selectedItems = [];
+  allmarketTypeData: any;
+  marketTypeDetails: any = [];
+  UserDatestestList: any = [];
+  term: string;
+  responseobtained: boolean;
+  fundsForm: FormGroup;
+  submitted = false;
+  indexvalues: any;
+  AllStrategies: any;
+  AllStrategies1: any;
+  AllStrategies3: any;
+  AllStrategies4: any;
+  AllStrategies5: any;
+  AllStrategies6: any;
+  AllStrategies7: any;
+  AllStrategies8: any;
+  AllStrategies9: any;
+  AllStrategies10: any;
+  AllStrategies11: any;
+  AllStrategies12: any;
+  AllStrategies13: any;
+  AllStrategies14: any;
+  AllStrategies15: any;
+  AllStrategies16: any;
+  public data: Observable<OtherData>;
+  simpleOption: any;
+  fundsname: any;
+  listoffunds: any = [];
+  platform: [];
+  selectedUserIds: any;
+  assetclass: any = [];
+  platforval: any = [];
+  assetclassval: any = [];
+  categoryfundval: any = [];
+  sectorval: any = [];
+  subcategoryval: any = [];
+  outputMutipleval: any = [];
+  allstrategiesList: any = [];
+  mutipleplatform: any;
+  selectedoption: any;
+  mutipleassets: any;
+  platform_finalval: string;
+  assetclass_finalval: string;
+  sectorclass_finalval: string;
+  multuiplesector: string;
+  dropdownSettings = {};
+  subcatgoryselected = {};
+  dropdownSettings_category = {};
+  dropdownSettings_sector = {};
+  dropdownSettings_assets = {};
+  assets: any;
+  sector: any;
+  sector_val: any;
+  nameoffund: string;
+  category: any;
+  assetClass: any;
+  subcategory: any;
+  example9settings: {};
+  singlefund: any;
+  mutiplefund: any;
+  SelectFundType: any;
+  SelectFund: any;
+  manual: string;
+  test: string;
+  selectAllName: any;
+  valSelected: any;
+  activeIdString: boolean;
+  newAdd: boolean;
+  description: string;
+  description1: string;
+  description3: string;
+  description4: string;
+  description5: string;
+  description6: string;
+  description7: string;
+  description8: string;
+  description9: string;
+  description10: string;
+  description11: string;
+  description12: string;
+  description13: string;
+  description14: string;
+  description15: string;
+  description16: string;
+  baseStrategy: string;
+  baseStrategy1: string;
+  baseStrategy3: string;
+  baseStrategy4: string;
+  baseStrategy5: string;
+  baseStrategy6: string;
+  baseStrategy7: string;
+  baseStrategy8: string;
+  baseStrategy9: string;
+  baseStrategy10: string;
+  baseStrategy11: string;
+  baseStrategy12: string;
+  baseStrategy13: string;
+  baseStrategy14: string;
+  baseStrategy15: string;
+  baseStrategy16: string;
+  showmarketTypeDetails: any = [];
+  sqn: number;
+  calmar: number;
+  sqn1: number;
+  sqn2: number;
+  sqn3: number;
+  sqn4: number;
+  sqn5: number;
+  sqn6: number;
+  sqn7: number;
+  sqn8: number;
+  sqn9: number;
+  sqn10: number;
+  sqn11: number;
+  sqn12: number;
+  sqn13: number;
+  sqn14: number;
+  sqn15: number;
+  calmar1: number;
+  calmar2: number;
+  calmar3: number;
+  calmar4: number;
+  calmar5: number;
+  calmar6: number;
+  calmar7: number;
+  calmar8: number;
+  calmar9: number;
+  calmar10: number;
+  calmar11: number;
+  calmar12: number;
+  calmar13: number;
+  calmar14: number;
+  calmar15: number;
+  averageSqn: any = [];
+  totalsqn: number;
+  totalcalmar: number;
+  sqnval: any = {};
+  calmarval: any = {};
+  MarketType: any;
+  UserDates: any;
+  Configured: any;
+  Selected: any;
+  BacktesterList: any = [];
+  BacktesterTestList: any = [];
+  MarketTypetestList: any = [];
+  Backtesterid: number;
+  dataFreqncy: string;
+  selected: any = [];
+  selectedoutcome: any;
+  pfid: number;
+  RowForStrategy: Boolean = false;
+  SelectedData: Boolean = false;
+  ConfiguredData: Boolean = false;
+  forUserDateType: Boolean = false;
+  forMarketType: Boolean = false;
+  submittedForm = false;
+  loadingPanelVisible: Boolean = false;
+  list_for_configfund: any  = [];
+  @ViewChild('tabs')
+  private tabs: NgbTabset;
+  constructor(
+    private apival: ApiService,
+    public toastr: ToastrManager,
+    private spinner: NgxSpinnerService,
+    private formBuilder: FormBuilder,
+    private cdRef: ChangeDetectorRef
+  ) {
+    // function for getting funds name
+    this.getFund();
+  }
+
+  getFund() {
+    this.apival.getFundDetailsUsingStatus('unconfig').subscribe((data) => {
+      if (data.Status === 200) {
+        this.fundsname = data.Response;
+        console.log('funds name', this.fundsname);
+      }
+    });
+  }
+
+  //api of fund type 
+
+  get_fund_type(){
+                    this.apival.showAllConfigurablesFundType('All').subscribe((data) => {
+    
+                    
+                     this.list_for_configfund = localStorage.setItem('list of Configured funds', JSON.stringify(data.Response));  
+                     console.log('funds name', this.list_for_configfund);
+                    });
+                   }
+  get f() {
+    return this.fundForm.controls;
+  }
+  ngOnInit() {
+   
+    this.fundForm = this.formBuilder.group({
+      fid: ['', Validators.required],
+      summary: ['', Validators.required],
+      description: ['', Validators.required],
+      fundstype: ['', Validators.required],
+      initial: ['', Validators.required],
+      risk: ['', Validators.required],
+      nav: ['', Validators.required],
+      platform:['', Validators.required],
+      assetclass: ['', Validators.required] ,
+      sector:['', Validators.required] ,
+      Subcategory: ['', Validators.required] ,
+      daily: ['', Validators.required],
+      weekly: ['', Validators.required],
+      monthly: ['', Validators.required],
+      marketTimingLinkedFundId :['', Validators.required],
+      symbol: ['', Validators.required],
+      sequence: ['', Validators.required]
+      
+ 
+    });
+    
+    // this.responseobtained = false;
+    // this.spinner.show();
+    // setTimeout(() => {
+    //   /** spinner ends after 1 second */
+    //   this.spinner.hide();
+    // }, 1000);
+    //  console.log('Value for spinner is:', this.spinner);
+    this.newAdd = true;
+    this.allMarketTypeOutcome(); // fucntion for fetching the market Type details
+    this.getPlatform(); // servcie for showing the value for all platform
+    this.getAssetClass(); // service for showing the value for all asset class
+    this.getSector(); // function for getting all sector
+    this.getPortFolioSUbCategory(); // function for calling all category data
+    this.getAllPrtfolioStrategyList();
+    this.mutipleTypeSelected();// function is used for Market Timing-Linked Fund 
+     this.get_fund_type();
+    // this.ShowmarketypeInvestmentStrategyOutcome();
+    // Function for getPlatform
+    this.singlefund = {};
+    this.mutiplefund = {};
+    this.dropdownSettings = {
+      singleSelection: false,
+      idField: 'assignedname',
+      textField: 'name',
+      selectAllText: 'Select All',
+      unSelectAllText: 'UnSelect All',
+      itemsShowLimit: 3,
+      allowSearchFilter: true,
+    };
+    this.dropdownSettings_category = {
+      singleSelection: false,
+      idField: 'assignedname',
+      textField: 'name',
+      selectAllText: 'Select All',
+      unSelectAllText: 'UnSelect All',
+      itemsShowLimit: 1,
+      allowSearchFilter: true,
+    };
+    this.dropdownSettings_sector = {
+      singleSelection: false,
+      idField: 'assignedname',
+      textField: 'name',
+      selectAllText: 'Select All',
+      unSelectAllText: 'UnSelect All',
+      itemsShowLimit: 3,
+      allowSearchFilter: true,
+    };
+    this.dropdownSettings_assets = {
+      singleSelection: false,
+      idField: 'assignedname',
+      textField: 'name',
+      selectAllText: 'Select All',
+      unSelectAllText: 'UnSelect All',
+      itemsShowLimit: 3,
+      allowSearchFilter: true,
+    };
+    this.example9settings = {
+      enableSearch: true,
+    };
+    // function for dropdown settings functionality
+  }
+
+  ngAfterContentChecked(): void {
+    this.cdRef.detectChanges();
+  }
+
+  getPlatform() {
+    this.apival.getPlatform().subscribe((data) => {
+      if (data.Status === 200) {
+        this.platform = data.Response;
+      }
+    });
+  } // End Of getPlatform
+  // function for fetching the detail for all investment strategy
+  getAllPrtfolioStrategyList() {
+    this.apival.ShowAllInvestmentStrategy().subscribe(
+      (success) => {
+        this.responseobtained = true;
+        this.allstrategiesList = success.Response;
+        // this.allmarketTypeData = success.Response;
+      },
+      (failure) => {
+        this.toastr.errorToastr(
+          'Error at Endpoint integration, Check Internet Connection!'
+        );
+      }
+    );
+  }
+  // end of function for fetching the list of all inves
+  getAssetClass() {
+    this.apival.getAssetClasses().subscribe((data) => {
+      if (data.Status === 200) {
+        this.assetclass = data.Response;
+      }
+    });
+  } // End Of getPlatform
+  onItemSelect(item: any, val) {
+    this.platforval.push(item.assignedname);
+    if (val === 'S') {
+      this.platform_finalval = this.platforval.join('');
+      console.log(' this.platform_finalval', this.platform_finalval);
+    } else {
+      this.mutipleplatform = this.platforval.join('');
+    }
+  }
+  // on desecting item
+  onItemDeSelect(item: any, val) {
+    this.platforval.pop(item.assignedname);
+    if (val === 'S') {
+      this.platform_finalval = this.platforval.join('');
+      console.log(' this.platform_finalval', this.platform_finalval);
+    } else {
+      this.mutipleplatform = this.platforval.join('');
+    }
+  } // end of de selcting platform type
+  onAssetDeSelect(item: any, val) {
+    this.assetclassval.pop(item.assignedname);
+    if (val === 'S') {
+      this.assetclass_finalval = this.assetclassval.join('');
+    } else {
+      this.mutipleassets = this.assetclassval.join('');
+    }
+  } // end of de selcting asset type
+  onSectorDeSelect(item: any, val) {
+    this.sectorval.pop(item.assignedname);
+    if (val === 'S') {
+      this.sectorclass_finalval = this.sectorval.join('');
+    } else {
+      this.multuiplesector = this.sectorval.join('');
+    }
+  } // end of de selcting asset type
+  // function for deselecting portfolio sub category selected
+  onSubcatPDeSelect(item: any) {
+    this.subcategoryval.pop(item.assignedname);
+    this.subcatgoryselected = this.subcategoryval.join('');
+  } // end of de selecting all portfolio type
+  onItemSelectasset(item: any, val) {
+    this.assetclassval.push(item.assignedname);
+    if (val === 'S') {
+      this.assetclass_finalval = this.assetclassval.join('');
+    } else {
+      this.mutipleassets = this.assetclassval.join('');
+    }
+  }
+  onItemSelectsector(item: any, val) {
+    this.sectorval.push(item.assignedname);
+    if (val === 'S') {
+      this.sectorclass_finalval = this.sectorval.join('');
+    } else {
+      this.multuiplesector = this.sectorval.join('');
+    }
+  }
+  // on select All for platform
+  onSelectAll(items: any, val, qval) {
+    this.platforval = [];
+    items.forEach((item) => {
+      this.platforval.push(item.assignedname);
+      if (qval === 'S') {
+        this.mutipleplatform = '';
+        this.platform_finalval = this.platforval.join('');
+      } else {
+        this.platform_finalval = '';
+        this.mutipleplatform = this.platforval.join('');
+      }
+    });
+  }
+  onSelectAllA(items: any, val, qval) {
+    this.assetclassval = [];
+    items.forEach((item) => {
+      this.assetclassval.push(item.assignedname);
+      if (qval === 'S') {
+        this.mutipleassets = '';
+        this.assetclass_finalval = this.assetclassval.join('');
+      } else {
+        this.assetclass_finalval = '';
+        this.mutipleassets = this.assetclassval.join('');
+      }
+    });
+  }
+  // end of onSelectAll function
+  onSelectAllS(items: any, val, qval) {
+    this.sectorval = [];
+    items.forEach((item) => {
+      this.sectorval.push(item.assignedname);
+      if (qval === 'S') {
+        this.multuiplesector = '';
+        this.sectorclass_finalval = this.sectorval.join('');
+      } else {
+        this.sectorclass_finalval = '';
+        this.multuiplesector = this.sectorval.join('');
+      }
+    });
+  }
+  // end of onSelectAll function
+
+  // function for selecting all sub porfolio subcategory
+  onSelectAllSubcatP(items: any, val) {
+    this.subcategoryval = [];
+    items.forEach((item) => {
+      this.subcategoryval.push(item.assignedname);
+      this.subcatgoryselected = this.subcategoryval.join('');
+    });
+  } // end of onSelectSubCatP function
+  getSector() {
+    this.apival.getSector().subscribe((data) => {
+      if (data.Status === 200) {
+        this.sector = data.Response;
+      }
+    });
+  } // End Of getPlatform
+  getPortFolioSUbCategory() {
+    this.apival.portfolioSubCategory().subscribe((data) => {
+      if (data.Status === 200) {
+        this.subcategory = data.Response;
+      }
+    });
+  }
+  // function for saving the list of single fund list
+  singleList(jsonSinglefund, type) {
+                                       console.log('formdata', jsonSinglefund,type);
+                                       this.submittedForm = true;
+                                      // this.fundForm.value.configfund =  jsonSinglefund.configfund
+                                       console.log(this.fundForm.value) 
+                                
+                                              if (type === 'E') {
+                                                                                        console.log('inside edit');
+                                                                                        this.platforval = [];
+                                                                                        this.sectorval = [];
+                                                                                        this.assetclassval = [];
+                                                                                        this.subcategoryval = [];
+                                                                                        this.singlefund.platform.forEach((item) => {
+                                                                                          this.platforval.push(item.assignedname);
+                                                                                          this.platform_finalval = this.platforval.join('');
+                                                                                        });
+                                                                                        this.singlefund.assetclass.forEach((item) => {
+                                                                                          this.assetclassval.push(item.assignedname);
+                                                                                          this.assetclass_finalval = this.assetclassval.join('');
+                                                                                        });
+                                                                                        this.singlefund.sector.forEach((item) => {
+                                                                                          this.sectorval.push(item.assignedname);
+                                                                                          this.sectorclass_finalval = this.sectorval.join('');
+                                                                                        });
+                                                                                        // functionality for joining the val for subcategory
+                                                                                        this.singlefund.subcategory.forEach((item) => {
+                                                                                          this.subcategoryval.push(item.assignedname);
+                                                                                          this.subcatgoryselected = this.subcategoryval.join('');
+                                                                                        });
+                                                                                        if (this.selectedoption === 'add') 
+                                                                                          { jsonSinglefund.fid = 0;}
+                                              }
+                                                        // jsonSinglefund.markettypeMonthly = jsonSinglefund.markettypeMonthly;
+                                                        jsonSinglefund.markettypeWeekly = jsonSinglefund.markettypeWeekly;
+                                                        jsonSinglefund.markettypeDaily = jsonSinglefund.markettypeDaily;
+                                                        jsonSinglefund.platform = this.platform_finalval;
+                                                        jsonSinglefund.sector = this.sectorclass_finalval;
+                                                        jsonSinglefund.assetclass = this.assetclass_finalval;
+                                                        jsonSinglefund.subcategory = this.subcatgoryselected;
+
+                                                        const objval = Object.assign({}, jsonSinglefund);
+                                                      
+                                                        objval.fid = this.fundForm.value.fid;
+                                                        objval.summary = this.fundForm.value.summary;
+                                                        objval.description = this.fundForm.value.description;
+                                                     
+                                                        objval.initial = this.fundForm.value.initial;
+                                                        objval.risk = this.fundForm.value.risk;
+                                                        objval.nav = this.fundForm.value.nav;
+                                                       
+                                                        objval.marketTimingLinkedFundId  = this.fundForm.value.marketTimingLinkedFundId ;
+                                                        objval.symbol = this.fundForm.value.symbol;
+                                                        objval.sequence = this.fundForm.value.sequence;
+
+                                                        objval.platform = jsonSinglefund.platform;
+                                                        objval.assetclass = jsonSinglefund.assetclass;
+                                                        objval.sector = jsonSinglefund.sector;
+                                                    
+
+                                                        objval.Subcategory = jsonSinglefund.Subcategory;
+                                                        objval.daily = this.fundForm.value.daily;
+                                                        objval.weekly = this.fundForm.value.weekly;
+                                                        objval.monthly = this.fundForm.value.monthly;
+                                                        console.log(objval)
+                                                        this.apival.AddSingleFund(objval).subscribe(
+                                                          (data) => {
+                                                             console.log(data)
+                                                            this.getFund();
+                                                            if (data.Status === 200) {
+                                                              this.toastr.successToastr('Data Added');
+                                                              this.mutipleTypeSelected();
+                                                               this.fundForm.reset(); // for reset single fund obj.
+                                                               this.mutiplefund.sector = [];
+                                                               this.mutiplefund.assetclass = [];
+                                                              
+                                                            } else if (data.Status === 201) {
+                                                              this.toastr.errorToastr('Please Fill All Fields');
+                                                            } else {
+                                                              this.toastr.errorToastr(data.Message);
+                                                              this.mutipleTypeSelected();
+                                                            }
+                                                          },
+                                                          (error) => {
+                                                                       console.log('Error encountered in Funds.AddSingleFund');
+                                                          });
+                                                        this.submittedForm = false;
+                                                    
+                                            // this.singlefund = "";
+  }
+  // this function can be refactored and removed#Refactoring
+  cancel() {
+    this.singlefund = {};
+  }
+  onItemSelectsubcategory(subcat) {
+    this.subcategoryval.push(subcat.assignedname);
+    this.subcatgoryselected = this.subcategoryval.join('');
+  }
+  // function for fetching the latest value for created funds are follwoing:
+  mutipleTypeSelected() {
+    this.activeIdString = false;
+    console.log('inside the function (mutipleTypeSelected )for fund list tab');
+    this.listoffunds = [];
+    this.spinner.show();
+    // console.log('Inside mutiple type servcie call');
+    this.apival.GetAllFunds().subscribe((data) => {
+      if (data.Status === 200) {
+       console.log(data)
+        this.listoffunds = data.Response;
+        setTimeout(() => {
+          /** spinner ends after 1 second */
+          this.spinner.hide();
+        }, 1000);
+      }
+    });
+  } // end of mutipleTypeSelected function
+  // function for selecting input type for the whole row
+  itemselected(row, index) {
+    if (!_.contains(this.outputMutipleval, row)) {
+      this.outputMutipleval.push(row);
+    } else {
+      this.outputMutipleval.pop(row);
+    }
+    // console.log('Obtained value for selected row is:', this.outputMutipleval);
+  } // end of itemselcetd function
+  // function for saving the mutiplelist data
+  mutipleFundList() {
+    const totalmultple = this.outputMutipleval.forEach((item) => {
+      item.platform = this.mutipleplatform.toString();
+      item.assetclass = this.mutipleassets.toString();
+      item.sector = this.multuiplesector.toString();
+      item.subcategory = this.mutiplefund.subcategory[0].assignedname;
+    });
+    this.apival.AddMutipleFund(this.outputMutipleval).subscribe((data) => {
+      if (data.Status === 200) {
+         this.mutiplefund = []
+          this.toastr.successToastr('Data updated');
+      }
+    });
+    // console.log('Obtained value for selected multiple type value is following:', this.outputMutipleval);
+  }
+
+  // function for selecting new fund list data
+  addNew(addingNewFList, val) {
+    alert("all edit data ")
+    console.log('addingNewFList,', val,addingNewFList);
+    this.fundForm = this.formBuilder.group({
+      // Name: ['',Validators.required],
+      summary: ['', Validators.required],
+      description: ['', Validators.required],
+      fundtype: ['', Validators.required],
+      initial: ['', Validators.required],
+      risk: ['', Validators.required],
+      nav: ['', Validators.required],
+      platform: ['' , Validators.required],
+      assetclass: ['', Validators.required],
+      sector: ['', Validators.required],
+      Subcategory: ['', Validators.required],
+      daily: ['', Validators.required],
+      weekly: ['', Validators.required],
+      monthly: ['', Validators.required],
+      fundname: [''],
+    });  
+    this.loadingPanelVisible = false;
+    this.fundForm.patchValue({
+      fundname: addingNewFList.fundname ,  
+      summary: addingNewFList.summary,
+      description: addingNewFList.description,
+      fundtype: addingNewFList.fundstype,
+      initial: addingNewFList.initialchargepercent,
+      risk: addingNewFList.fundriskrating,
+      nav: addingNewFList.navprice,
+      platform:addingNewFList.platform,
+      assetclass: addingNewFList.assetclass,
+      sector: addingNewFList.sector,
+      Subcategory:addingNewFList.subcategory,
+      daily: addingNewFList.markettypeDaily,
+      weekly: addingNewFList.markettypeWeekly,
+      monthly: addingNewFList.markettypeMonthly,
+    })
+    
+   // console.log('form value', this.fundForm.value, 'adding new list val', this.addingNewFList);
+    this.selectedoption = val;
+    this.singlefund.fid = addingNewFList.fid;
+    this.singlefund.fundname = addingNewFList.fundname;
+    this.newAdd = false;
+    this.activeIdString = true; // for activating the single fund list tab to stay active
+    this.singlefund = addingNewFList;
+    this.nameoffund = addingNewFList.fundname;
+    const platform = this.singlefund.platform.split('');
+    const asset = this.singlefund.assetclass.split('');
+    const sectorval = this.singlefund.sector.split('');
+    const subcategory = this.singlefund.subcategory.split('');
+    // console.log('oBTAINED VALUE FOR SELETCED PLATFORM IS:', platform, 'All Platform valye is:', this.platform);
+    const intersectedVal = [];
+    const intersectedValasset = [];
+    const intersectedValsector = [];
+    const intersectedValsubcategory = [];
+    // for platform selection value
+    this.platform.forEach((e1) => {
+      return platform.forEach((e2) => {
+        if (e1 !== null) {
+          if (e1['assignedname'] === e2) {
+            intersectedVal.push(e1);
+          }
+        }
+      });
+    }); // end of platform selection value
+    this.assetclass.forEach((e1) =>
+      asset.forEach((e2) => {
+        if (e1 !== null) {
+          if (e1.assignedname === e2) {
+            intersectedValasset.push(e1);
+          }
+        }
+      })
+    ); // end of asset class selection value
+    this.sector.forEach((e1) =>
+      sectorval.forEach((e2) => {
+        if (e1 !== null) {
+          if (e1.assignedname === e2) {
+            intersectedValsector.push(e1);
+          }
+        }
+      })
+    ); // end of asset class selection value
+    // sub category selection value
+    this.subcategory.forEach((e1) =>
+      subcategory.forEach((e2) => {
+        if (e1 !== null) {
+          if (e1.assignedname === e2) {
+            intersectedValsubcategory.push(e1);
+          }
+        }
+      })
+    );
+    // for (let invalue = 0; invalue < this.subcategory.length; invalue++) {
+    //   if (this.subcategory[invalue].assignedname === addingNewFList.subcategory) {
+    //     this.categoryfundval.push(this.subcategory[invalue]);
+    //   }
+    // }
+    this.singlefund.platform = intersectedVal;
+    this.singlefund.assetclass = intersectedValasset;
+    this.singlefund.sector = intersectedValsector;
+    this.singlefund.subcategory = intersectedValsubcategory;
+    console.log('Step 1');
+    this.callingEndpointForMarketTypeOutcome(this.singlefund.fid);
+  }
+
+
+
+  // function for fetching the strategy outcome based on selected fid
+  callingEndpointForMarketTypeOutcome(fund_id) {
+    console.log('fund_id', fund_id);
+    this.apival.ShowInvestmentStrategyOutcome(fund_id).subscribe(
+      (success) => {
+        const allValues = success.Response[0];
+        // taking the values further based on the selected length of the response
+        if (allValues !== undefined) {
+          // sending the response value for allValues along with the selected data for outcome
+          if (allValues && allValues.fmtis) {
+            this.sendingval('', '', 'true', allValues.fmtis);
+          }
+          // end of terminated if condition
+        } else {
+          this.toastr.infoToastr('No Strategy Saved for the selected Fund Id');
+        }
+      },
+      (error) => {}
+    );
+  }
+  // end of calling End point for market type outcome
+  // function for selecting single funds type
+  singleTypeSelected() {
+    this.newAdd = true;
+    this.singlefund = [];
+  }
+  // function for implementing functionality for select all at mutiple dropdown
+  sendToAll(value_all) {
+    this.outputMutipleval = value_all;
+  }
+  // function for addign the descrption and name based on selected id
+  sendingval(idval, indexval, valueforedit, totalval) {
+    this.allstrategiesList.forEach((value) => {
+      if ((idval === value.id && indexval == 1) || valueforedit == 'true') {
+        this.description = value.description;
+        this.baseStrategy = value.basetex;
+      } else if (
+        (idval === value.id && indexval == 2) ||
+        valueforedit == 'true'
+      ) {
+        this.description1 = value.description;
+        this.baseStrategy1 = value.basetex;
+      } else if (
+        (idval === value.id && indexval == 3) ||
+        valueforedit == 'true'
+      ) {
+        this.description3 = value.description;
+        this.baseStrategy3 = value.basetex;
+      } else if (
+        (idval === value.id && indexval == 4) ||
+        valueforedit == 'true'
+      ) {
+        this.description4 = value.description;
+        this.baseStrategy4 = value.basetex;
+      } else if (
+        (idval === value.id && indexval == 5) ||
+        valueforedit == 'true'
+      ) {
+        this.description5 = value.description;
+        this.baseStrategy5 = value.basetex;
+      } else if (
+        (idval === value.id && indexval == 6) ||
+        valueforedit == 'true'
+      ) {
+        this.description6 = value.description;
+        this.baseStrategy6 = value.basetex;
+      } else if (
+        (idval === value.id && indexval == 7) ||
+        valueforedit == 'true'
+      ) {
+        this.description7 = value.description;
+        this.baseStrategy7 = value.basetex;
+      } else if (
+        (idval === value.id && indexval == 8) ||
+        valueforedit == 'true'
+      ) {
+        this.description8 = value.description;
+        this.baseStrategy8 = value.basetex;
+      } else if (
+        (idval === value.id && indexval == 9) ||
+        valueforedit == 'true'
+      ) {
+        this.description9 = value.description;
+        this.baseStrategy9 = value.basetex;
+      } else if (
+        (idval === value.id && indexval == 10) ||
+        valueforedit == 'true'
+      ) {
+        this.description10 = value.description;
+        this.baseStrategy10 = value.basetex;
+      } else if (
+        (idval === value.id && indexval == 11) ||
+        valueforedit == 'true'
+      ) {
+        this.description11 = value.description;
+        this.baseStrategy11 = value.basetex;
+      } else if (
+        (idval === value.id && indexval == 12) ||
+        valueforedit == 'true'
+      ) {
+        this.description12 = value.description;
+        this.baseStrategy12 = value.basetex;
+      } else if (
+        (idval === value.id && indexval == 13) ||
+        valueforedit == 'true'
+      ) {
+        this.description13 = value.description;
+        this.baseStrategy13 = value.basetex;
+      } else if (
+        (idval === value.id && indexval == 14) ||
+        valueforedit == 'true'
+      ) {
+        this.description14 = value.description;
+        this.baseStrategy14 = value.basetex;
+      } else if (
+        (idval === value.id && indexval == 15) ||
+        valueforedit == 'true'
+      ) {
+        this.description15 = value.description;
+        this.baseStrategy15 = value.basetex;
+      } else if (
+        (idval === value.id && indexval == 16) ||
+        valueforedit == 'true'
+      ) {
+        this.description16 = value.description;
+        this.baseStrategy16 = value.basetex;
+      }
+    });
+  }
+  AllsendinDescriptionData(dayta, indexval) {
+    this.AllStrategies = dayta;
+    this.AllStrategies1 = dayta;
+    this.AllStrategies3 = dayta;
+    this.AllStrategies5 = dayta;
+    this.AllStrategies6 = dayta;
+    this.AllStrategies7 = dayta;
+    this.AllStrategies8 = dayta;
+    this.AllStrategies9 = dayta;
+    this.AllStrategies10 = dayta;
+    this.AllStrategies11 = dayta;
+    this.AllStrategies12 = dayta;
+    this.AllStrategies13 = dayta;
+    this.AllStrategies14 = dayta;
+    this.AllStrategies15 = dayta;
+    this.AllStrategies16 = dayta;
+    this.AllStrategies4 = dayta;
+  }
+  // function for fetching the description detail for the selected market type outcome
+  sendinDescriptionData(dayta, indexval) {
+    this.AllStrategies = undefined;
+    this.sendingval(dayta, indexval, '', '');
+  }
+  // function for fetching the details of market type outcome
+  allMarketTypeOutcome() {
+    this.apival.AllMarketTypeDetail().subscribe(
+      (success) => {
+        this.marketTypeDetails = success.Response;
+      },
+      (error) => {}
+    );
+  }
+  selectPop() {
+    const val = this.singlefund.fid;
+    this.apival.ShowmarketypeInvestmentStrategyOutcome(val).subscribe(
+      (success) => {
+        this.showmarketTypeDetails = success.Response;
+      },
+      (error) => {}
+    );
+  }
+  // function for saving the outcome
+  savingOutcome() {
+    const objectVal = {
+      fundid: [],
+      markettypeDaily: '',
+      markettypeWeekly: '',
+      markettypeMonthly: '',
+      dataFrequency: '',
+      fmtis: [],
+    };
+    objectVal.fundid[0] = this.singlefund.fid;
+    objectVal.markettypeDaily = this.singlefund.markettypeDaily;
+    objectVal.markettypeWeekly = this.singlefund.markettypeWeekly;
+    objectVal.markettypeMonthly = this.singlefund.markettypeMonthly;
+    objectVal.dataFrequency = this.singlefund.dataFrequency;
+    objectVal.fmtis = [
+      {
+        markettypeoutcome: 'A',
+        IS: this.AllStrategies1,
+      },
+      {
+        markettypeoutcome: 'B',
+        IS: this.AllStrategies3,
+      },
+      {
+        markettypeoutcome: 'C',
+        IS: this.AllStrategies4,
+      },
+      {
+        markettypeoutcome: 'D',
+        IS: this.AllStrategies5,
+      },
+      {
+        markettypeoutcome: 'E',
+        IS: this.AllStrategies6,
+      },
+      {
+        markettypeoutcome: 'F',
+        IS: this.AllStrategies7,
+      },
+      {
+        markettypeoutcome: 'G',
+        IS: this.AllStrategies14,
+      },
+      {
+        markettypeoutcome: 'H',
+        IS: this.AllStrategies15,
+      },
+      {
+        markettypeoutcome: 'I',
+        IS: this.AllStrategies16,
+      },
+      {
+        markettypeoutcome: 'J',
+        IS: this.AllStrategies11,
+      },
+      {
+        markettypeoutcome: 'K',
+        IS: this.AllStrategies12,
+      },
+      {
+        markettypeoutcome: 'L',
+        IS: this.AllStrategies13,
+      },
+      {
+        markettypeoutcome: 'M',
+        IS: this.AllStrategies8,
+      },
+      {
+        markettypeoutcome: 'O',
+        IS: this.AllStrategies10,
+      },
+      {
+        markettypeoutcome: 'N',
+        IS: this.AllStrategies9,
+      },
+    ];
+    this.apival.AddUpdateInvestmentStrategyOutcome(objectVal).subscribe(
+      (success) => {
+        this.getFund();
+        this.toastr.successToastr(success.Response);
+      },
+      (error) => {
+        this.toastr.errorToastr(
+          'Error at calling Endpoint.Check Internet Connection!'
+        );
+      }
+    );
+  }
+  // end of saving Outcome
+  // funtion to show test period
+  showBackTesterTestData() {
+    console.log('inside backester');
+    const test = [
+      {
+        instrumentType: 'f',
+        instrument: this.singlefund.fid,
+      },
+    ];
+    const param = {
+      test,
+      dataFrequency: 'monthly',
+    };
+    console.log('param data', param);
+    this.apival.ShowBackTesterTest(param).subscribe(
+      (data) => {
+        console.log('data', data);
+        if (data && data.Status === 200) {
+          this.listoffunds = data.Response;
+          console.log('list', this.listoffunds);
+          this.listoffunds.marketType.forEach((element) => {
+            // console.log("test in element for list",element.test);
+            if (element.test.length > 0) {
+              this.MarketTypetestList = element.test;
+              console.log(
+                'Backtester list for market type',
+                this.MarketTypetestList
+              );
+            }
+          });
+          this.UserDatestestList = this.listoffunds.userDates;
+          console.log(
+            'Backtester list for user dates  type',
+            this.UserDatestestList
+          );
+          const tempArray = [];
+          this.BacktesterTestList = _.uniq(tempArray);
+          this.BacktesterTestList = [
+            ...this.MarketTypetestList,
+            ...this.listoffunds.userDates,
+          ];
+          console.log('concat array', this.BacktesterTestList);
+        }
+      },
+      (error) => {
+        console.log('error from show backtester', error);
+      }
+    );
+  }
+
+
+  //   selectDataFrequency(frequency,fid){
+  //     this.dataFreqncy = frequency;
+  //  console.log("data values for show backtester test",frequency,fid)
+  //  this.showBackTesterTestData();
+  //   }
+  // selectModal(outcome){
+
+  //   console.log("selected outcome is:",outcome)
+  //   this.selectedoutcome = outcome;
+  //  //  this.modalOverflow.show();
+  //  }
+  SelectingData(event, selectedata) {
+    console.log('selectied data from table', event, selectedata);
+
+    const average = [];
+    const backtesterData = [];
+    // let sum =0
+    for (let i = 0; i < selectedata.length; i++) {
+      console.log('value  sqn is:', selectedata, selectedata[i].rfpssId);
+      const obj = {
+        sqn: selectedata[i].sqn,
+        calmar: selectedata[i].calmar,
+        backtesterId: selectedata[i].backtesterId,
+      };
+      console.log('object of selected data', obj);
+      average.push(obj);
+      this.averageSqn = average;
+      console.log('average sqn is:', this.averageSqn);
+      let sumsqn = 0;
+      let sumcalmar = 0;
+      this.averageSqn.forEach((element) => {
+        console.log(
+          'element for data selected',
+          element,
+          element.sqn,
+          element.calmar
+        );
+        this.Backtesterid = element.backtesterId;
+        sumsqn = sumsqn + Number(element.sqn);
+        sumcalmar = sumcalmar + Number(element.calmar);
+        console.log('sum for sqn selected', sumsqn);
+        this.totalsqn = Number(sumsqn) / 2;
+        console.log('average of sqn ', this.totalsqn);
+        this.totalcalmar = Number(sumcalmar) / 2;
+        console.log('average of calmar ', this.totalcalmar);
+      });
+
+      if (this.selectedoutcome === '1') {
+        this.sqnval.sqn = this.totalsqn;
+        this.calmarval.calmar = this.totalcalmar;
+        //  this.outcomeJson[i].backtesterId =  this.Backtesterid;
+        console.log('sqn:', this.sqnval.sqn);
+      }
+      if (this.selectedoutcome === '2') {
+        //  console.log("kkkkk:")
+        this.sqnval.sqn1 = this.totalsqn;
+        this.calmarval.calmar1 = this.totalcalmar;
+        //  this.outcomeJson[i].backtesterId =  this.Backtesterid;
+      }
+      if (this.selectedoutcome === '3') {
+        this.sqnval.sqn2 = this.totalsqn;
+        this.calmarval.calmar2 = this.totalcalmar;
+        //  this.outcomeJson[i].backtesterId =  this.Backtesterid;
+        console.log('sqn:', this.sqnval.sqn);
+      }
+      if (this.selectedoutcome === '4') {
+        console.log('kkkkk:');
+        this.sqnval.sqn3 = this.totalsqn;
+        this.calmarval.calmar3 = this.totalcalmar;
+        // this.outcomeJson[i].backtesterId =  this.Backtesterid;
+      }
+      if (this.selectedoutcome === '5') {
+        this.sqnval.sqn4 = this.totalsqn;
+        this.calmarval.calmar4 = this.totalcalmar;
+        // this.outcomeJson[i].backtesterId =  this.Backtesterid;
+        console.log('sqn:', this.sqnval.sqn);
+      }
+      if (this.selectedoutcome === '6') {
+        // console.log("kkkkk:")
+        this.sqnval.sqn5 = this.totalsqn;
+        this.calmarval.calmar5 = this.totalcalmar;
+        // this.outcomeJson[i].backtesterId =  this.Backtesterid;
+      }
+      if (this.selectedoutcome === '7') {
+        this.sqnval.sqn6 = this.totalsqn;
+        this.calmarval.calmar6 = this.totalcalmar;
+        // this.outcomeJson[i].backtesterId =  this.Backtesterid;
+        console.log('sqn:', this.sqnval.sqn);
+      }
+      if (this.selectedoutcome === '8') {
+        console.log('kkkkk:');
+        this.sqnval.sqn7 = this.totalsqn;
+        this.calmarval.calmar7 = this.totalcalmar;
+        // this.outcomeJson[i].backtesterId =  this.Backtesterid;
+      }
+      if (this.selectedoutcome === '9') {
+        this.sqnval.sqn8 = this.totalsqn;
+        this.calmarval.calmar8 = this.totalcalmar;
+        // this.outcomeJson[i].backtesterId =  this.Backtesterid;
+        console.log('sqn:', this.sqnval.sqn);
+      }
+      if (this.selectedoutcome === '10') {
+        console.log('kkkkk:');
+        this.sqnval.sqn9 = this.totalsqn;
+        this.calmarval.calmar9 = this.totalcalmar;
+        // this.outcomeJson[i].backtesterId =  this.Backtesterid;
+      }
+      if (this.selectedoutcome === '11') {
+        this.sqnval.sqn10 = this.totalsqn;
+        this.calmarval.calmar10 = this.totalcalmar;
+        // this.outcomeJson[i].backtesterId =  this.Backtesterid;
+        console.log('sqn:', this.sqnval.sqn);
+      }
+      if (this.selectedoutcome === '12') {
+        console.log('kkkkk:');
+        this.sqnval.sqn11 = this.totalsqn;
+        this.calmarval.calmar11 = this.totalcalmar;
+        // this.outcomeJson[i].backtesterId =  this.Backtesterid;
+      }
+      if (this.selectedoutcome === '13') {
+        this.sqnval.sqn12 = this.totalsqn;
+        this.calmarval.calmar12 = this.totalcalmar;
+        // this.outcomeJson[i].backtesterId =  this.Backtesterid;
+        //  console.log("sqn:",  this.sqnval.sqn)
+      }
+      if (this.selectedoutcome === '14') {
+        // console.log("kkkkk:")
+        this.sqnval.sqn13 = this.totalsqn;
+        this.calmarval.calmar13 = this.totalcalmar;
+        // this.outcomeJson[i].backtesterId =  this.Backtesterid;
+      }
+      if (this.selectedoutcome === '15') {
+        this.sqnval.sqn14 = this.totalsqn;
+        this.calmarval.calmar14 = this.totalcalmar;
+        // this.outcomeJson[i].backtesterId =  this.Backtesterid;
+        // console.log("sqn:",  this.sqnval.sqn)
+      }
+      if (this.selectedoutcome === '16') {
+        //   console.log("kkkkk:")
+        this.sqnval.sqn15 = this.totalsqn;
+        this.calmarval.calmar15 = this.totalcalmar;
+        // this.outcomeJson[i].backtesterId =  this.Backtesterid;
+      }
+    }
+  }
+  // selcted all functionality
+  selectAll(e, type) {
+    // console.log("valu for check  box ",e.checked,type )
+    if (e.checked == true) {
+      this.RowForStrategy = true;
+      this.SelectedData = true;
+      this.ConfiguredData = false;
+    } else if (e.checked == false) {
+      // console.log("checked value",e);
+      this.RowForStrategy = false;
+    }
+    if (type === 'Configured') {
+      this.RowForStrategy = false;
+      this.ConfiguredData = true;
+      this.SelectedData = false;
+    }
+  }
+  selectTestType(target, type) {
+    console.log(' selected test type', target, type);
+    if (type === 'MarketType' && target.checked == true) {
+      this.forMarketType = true;
+      // console.log("length of list for M",this.MarketTypetestList );
+      // console.log("Boolean value", this.forMarketType)
+    }
+    if (type === 'MarketType' && target.checked == false) {
+      this.forMarketType = false;
+      //  console.log("Boolean value", this.forMarketType)
+    } else if (type === 'UserDates' && target.checked == true) {
+      console.log('length of list for U', this.UserDatestestList);
+      this.forUserDateType = true;
+      //  console.log("Boolean value", this.forUserDateType);
+    } else if (type === 'UserDates' && target.checked == false) {
+      this.forUserDateType = false;
+      //   console.log("Boolean value", this.forUserDateType);
+    }
+  }
+
+  //  selectMapping(){
+  //   this.showBackTesterTestData();
+  //  }
+  //  SelectingDataWeekly(event,selectedata){
+  //  // console.log("selectied data from table",event,selectedata);
+
+  //   let average =[];
+  //   let backtesterData = [];
+  //   // let sum =0
+  //   for (let i = 0; i < selectedata.length; i++) {
+  //    // console.log("value  sqn is:",selectedata,selectedata[i].rfpssId);
+  //     let obj = {
+  //       sqn: selectedata[i].sqn,
+  //       calmar:selectedata[i].calmar,
+  //       backtesterId:selectedata[i].backtesterId
+  //     }
+  //    // console.log("object of selected data",obj)
+  //     average.push(obj);
+  //     this.averageSqn = average;
+  //       //  console.log("average sqn is:",this.averageSqn);
+  //         let sumsqn =0;
+  //         let sumcalmar =0;
+  //        this.averageSqn.forEach(element => {
+  //       //  console.log("element for data selected",element,element.sqn,element.calmar);
+  //         this.Backtesterid =element.backtesterId
+  //         sumsqn = sumsqn + Number (element.sqn) ;
+  //         sumcalmar = sumcalmar + Number (element.calmar) ;
+  //       //  console.log("sum for sqn selected",sumsqn);
+  //         this.totalsqn = Number(sumsqn)/2;
+  //       //  console.log("average of sqn ",this.totalsqn);
+  //         this.totalcalmar = Number(sumcalmar)/2;
+  //       //  console.log("average of calmar ",this.totalcalmar)
+  //        });
+
+  //        if(this.selectedoutcome === '1'){
+  //         this.sqnval.sqn = this.totalsqn;
+  //         this.calmarval.calmar = this.totalcalmar;
+  //       //  this.outcomeJson[i].backtesterId =  this.Backtesterid;
+  //        // console.log("sqn:",  this.sqnval.sqn)
+  //        }
+  //        if(this.selectedoutcome === '2'){
+  //       //  console.log("kkkkk:")
+  //         this.sqnval.sqn1 = this.totalsqn;
+  //         this.calmarval.calmar1 = this.totalcalmar;
+  //       //  this.outcomeJson[i].backtesterId =  this.Backtesterid;
+  //        }
+  //        if(this.selectedoutcome === '3'){
+  //         this.sqnval.sqn2 = this.totalsqn;
+  //         this.calmarval.calmar2 = this.totalcalmar;
+  //       //  this.outcomeJson[i].backtesterId =  this.Backtesterid;
+  //        // console.log("sqn:",  this.sqnval.sqn)
+  //        }
+  //        if(this.selectedoutcome === '4'){
+  //        // console.log("kkkkk:")
+  //         this.sqnval.sqn3 = this.totalsqn;
+  //         this.calmarval.calmar3 = this.totalcalmar;
+  //         //this.outcomeJson[i].backtesterId =  this.Backtesterid;
+  //        }
+  //        if(this.selectedoutcome === '5'){
+  //         this.sqnval.sqn4 = this.totalsqn;
+  //         this.calmarval.calmar4 = this.totalcalmar;
+  //        // this.outcomeJson[i].backtesterId =  this.Backtesterid;
+  //         //console.log("sqn:",  this.sqnval.sqn)
+  //        }
+  //        if(this.selectedoutcome === '6'){
+  //         //console.log("kkkkk:")
+  //         this.sqnval.sqn5 = this.totalsqn;
+  //         this.calmarval.calmar5 = this.totalcalmar;
+  //        // this.outcomeJson[i].backtesterId =  this.Backtesterid;
+  //        }
+  //        if(this.selectedoutcome === '7'){
+  //         this.sqnval.sqn6 = this.totalsqn;
+  //         this.calmarval.calmar6 = this.totalcalmar;
+  //        // this.outcomeJson[i].backtesterId =  this.Backtesterid;
+  //        // console.log("sqn:",  this.sqnval.sqn)
+  //        }
+  //        if(this.selectedoutcome === '8'){
+  //         //console.log("kkkkk:")
+  //         this.sqnval.sqn7 = this.totalsqn;
+  //         this.calmarval.calmar7 = this.totalcalmar;
+  //         // this.outcomeJson[i].backtesterId =  this.Backtesterid;
+  //        }
+  //        if(this.selectedoutcome === '9'){
+  //         this.sqnval.sqn8 = this.totalsqn;
+  //         this.calmarval.calmar8 = this.totalcalmar;
+  //         // this.outcomeJson[i].backtesterId =  this.Backtesterid;
+  //        // console.log("sqn:",  this.sqnval.sqn)
+  //        }
+  //        if(this.selectedoutcome === '10'){
+  //        // console.log("kkkkk:")
+  //         this.sqnval.sqn9 = this.totalsqn;
+  //         this.calmarval.calmar9 = this.totalcalmar;
+  //         // this.outcomeJson[i].backtesterId =  this.Backtesterid;
+  //        }
+  //        if(this.selectedoutcome === '11'){
+  //         this.sqnval.sqn10 = this.totalsqn;
+  //         this.calmarval.calmar10 = this.totalcalmar;
+  //         // this.outcomeJson[i].backtesterId =  this.Backtesterid;
+  //        // console.log("sqn:",  this.sqnval.sqn)
+  //        }
+  //        if(this.selectedoutcome === '12'){
+  //         console.log("kkkkk:")
+  //         this.sqnval.sqn11 = this.totalsqn;
+  //         this.calmarval.calmar11 = this.totalcalmar;
+  //         // this.outcomeJson[i].backtesterId =  this.Backtesterid;
+  //        }
+  //        if(this.selectedoutcome === '13'){
+  //         this.sqnval.sqn12 = this.totalsqn;
+  //         this.calmarval.calmar12 = this.totalcalmar;
+  //         // this.outcomeJson[i].backtesterId =  this.Backtesterid;
+  //       //  console.log("sqn:",  this.sqnval.sqn)
+  //        }
+  //        if(this.selectedoutcome === '14'){
+  //      //   console.log("kkkkk:")
+  //         this.sqnval.sqn13 = this.totalsqn;
+  //         this.calmarval.calmar13 = this.totalcalmar;
+  //         // this.outcomeJson[i].backtesterId =  this.Backtesterid;
+  //        }
+  //        if(this.selectedoutcome === '15'){
+  //         this.sqnval.sqn14 = this.totalsqn;
+  //         this.calmarval.calmar14 = this.totalcalmar;
+  //         // this.outcomeJson[i].backtesterId =  this.Backtesterid;
+  //        // console.log("sqn:",  this.sqnval.sqn)
+  //        }
+  //        if(this.selectedoutcome === '16'){
+  //         //console.log("kkkkk:")
+  //         this.sqnval.sqn15 = this.totalsqn;
+  //         this.calmarval.calmar15 = this.totalcalmar;
+  //         // this.outcomeJson[i].backtesterId =  this.Backtesterid;
+  //        }
+  //        if(this.selectedoutcome === '17 '){
+  //         //console.log("kkkkk:")
+  //         this.sqnval.sqn15 = this.totalsqn;
+  //         this.calmarval.calmar15 = this.totalcalmar;
+  //         // this.outcomeJson[i].backtesterId =  this.Backtesterid;
+  //        }
+  //       }
+  //     }
+
+  
+  
+  }
